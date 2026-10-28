@@ -20,7 +20,7 @@ To preview only:
 curl -fsSL https://raw.githubusercontent.com/pandamask2023/dgx-spark-fan-control-suite/v0.1.1/install.sh | sudo sh -s -- --lang en --dry-run
 ```
 
-Preview does not download the core package, install it or change fan modes. Existing/legacy installations are left unchanged. Missing matching kernel headers are included in the reviewed installation plan. No reboot, firmware flash or Secure Boot change is performed. APT needs access to the official configured system repositories.
+Preview does not download the core package, install it or change fan modes. Existing/legacy installations are left unchanged; see [migration guidance](docs/MIGRATION.md). Missing matching kernel headers are included in the reviewed installation plan. No reboot, firmware flash or Secure Boot change is performed. APT needs access to the official configured system repositories.
 
 ## Controls and readings
 
