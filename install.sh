@@ -14,7 +14,8 @@ base="https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/down
 work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT HUP INT TERM
 curl --fail --location --silent --show-error --proto '=https' --proto-redir '=https' "$base/SHA256SUMS" -o "$work/SHA256SUMS"
-curl --fail --location --silent --show-error --proto '=https' --proto-redir '=https' "$base/sparkfan-install" -o "$work/sparkfan-install"
+printf '%s\n' 'Downloading verified installer / 正在下载并校验安装向导'
+curl --fail --location --progress-bar --show-error --proto '=https' --proto-redir '=https' "$base/sparkfan-install" -o "$work/sparkfan-install"
 (cd "$work"; python3 -c 'import hashlib,re,pathlib; lines=pathlib.Path("SHA256SUMS").read_text().splitlines(); hashes=[m[1].lower() for line in lines if (m:=re.fullmatch(r"([0-9a-fA-F]{64}) [ *]sparkfan-install",line))]; assert len(hashes)==1 and hashlib.sha256(pathlib.Path("sparkfan-install").read_bytes()).hexdigest()==hashes[0], "Installer SHA256 mismatch"')
 chmod 700 "$work/sparkfan-install"
 "$work/sparkfan-install" "$@"
