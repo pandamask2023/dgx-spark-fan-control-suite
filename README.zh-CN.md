@@ -9,7 +9,7 @@
 在受支持的 DGX Spark 上执行：
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/pandamask2023/dgx-spark-fan-control-suite/v0.1.1/install.sh | sudo sh
+curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.1.1/install.sh | sudo sh
 ```
 
 进入交互式向导后，可选中英文、初始风扇模式和本机 CLI 账户；通过兼容性检查、展示安装计划并确认后才安装。**默认自动模式。** 键盘输入从终端读取，管道下载不会吞掉选项。入口先核对原生安装向导 SHA256，向导再验证软件包后交给 APT。
@@ -17,7 +17,7 @@ curl -fsSL https://raw.githubusercontent.com/pandamask2023/dgx-spark-fan-control
 只预览、不安装：
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/pandamask2023/dgx-spark-fan-control-suite/v0.1.1/install.sh | sudo sh -s -- --lang zh --dry-run
+curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.1.1/install.sh | sudo sh -s -- --lang zh --dry-run
 ```
 
 预览不会下载主软件包、安装或切换模式。已有套件或旧控制器保持不变，见[迁移说明](docs/MIGRATION.md)；缺少匹配内核 headers 时会在计划中说明并一并安装。不重启、不刷固件、不修改安全引导。APT 需要能访问系统配置的官方软件源。

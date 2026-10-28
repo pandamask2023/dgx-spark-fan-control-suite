@@ -9,7 +9,7 @@ Installable DGX Spark fan control with Web, authenticated API, CLI and persisten
 Run on a supported DGX Spark:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/pandamask2023/dgx-spark-fan-control-suite/v0.1.1/install.sh | sudo sh
+curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.1.1/install.sh | sudo sh
 ```
 
 The interactive terminal wizard offers English/Chinese, verifies compatibility, shows the selected mode and local CLI account, and asks before installing. **Automatic is the default.** Input comes from the terminal, so piping the command does not consume your menu answers. The entry point verifies the native installer's SHA256; the installer verifies the package before APT runs.
@@ -17,7 +17,7 @@ The interactive terminal wizard offers English/Chinese, verifies compatibility, 
 To preview only:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/pandamask2023/dgx-spark-fan-control-suite/v0.1.1/install.sh | sudo sh -s -- --lang en --dry-run
+curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.1.1/install.sh | sudo sh -s -- --lang en --dry-run
 ```
 
 Preview does not download the core package, install it or change fan modes. Existing/legacy installations are left unchanged; see [migration guidance](docs/MIGRATION.md). Missing matching kernel headers are included in the reviewed installation plan. No reboot, firmware flash or Secure Boot change is performed. APT needs access to the official configured system repositories.
