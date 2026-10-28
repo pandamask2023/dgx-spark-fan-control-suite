@@ -1,0 +1,7 @@
+DGX Spark Fan Control Suite is an independent project, not an NVIDIA product.
+
+The kernel module and build files are GPL-2.0-only. Linux FF-A interfaces and https://github.com/christopherowen/dgx-spark-fan-control were references during development. Required corresponding kernel source is supplied with the release and DKMS package. No NVIDIA firmware is included.
+
+User-space native binaries are proprietary; see LICENSE. The embedded Python runtime retains the PSF license; generated runtime/dependency notices are in LICENSES. Earlier source releases retain their original licenses.
+
+The optional private performance companion's source and binary are not part of this public distribution. NVIDIA and DGX Spark are their owners' marks.

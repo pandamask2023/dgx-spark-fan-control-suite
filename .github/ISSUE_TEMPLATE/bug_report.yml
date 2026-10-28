@@ -1,0 +1,15 @@
+name: Bug report / 问题反馈
+description: Report an installation, control, or telemetry problem.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened? / 问题描述
+      description: Include the version and steps to reproduce. Do not include tokens, passwords, private keys or device serials.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Hardware and software versions / 硬件与软件版本
+      description: DGX model, BIOS/EC/kernel versions and the command you ran. Redact device identities and credentials from logs.

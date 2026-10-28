@@ -1,0 +1,7 @@
+DGX Spark Fan Control Suite 0.1.1
+
+User-space Web/API/CLI and installer components: Copyright 2026 pandamask2023. All rights reserved. Binary use is permitted. No user-space source license is granted with this release.
+
+Kernel driver, its build files and required corresponding source: GPL-2.0-only; see LICENSES/GPL-2.0.txt and the kernel-source archive supplied with the release. GPL rights for this component are unaffected.
+
+Third-party dependencies retain their respective licenses. Earlier source releases remain governed by their original licenses; this notice does not revoke permissions already granted for those versions.
