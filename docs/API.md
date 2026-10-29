@@ -7,6 +7,7 @@ Default: `http://127.0.0.1:8797`, loopback only. Every API request needs a beare
 | Method | Path | Purpose |
 |---|---|---|
 | GET | `/api/v1/status` | Verified current mode, operation and measured telemetry |
+| GET | `/api/v1/self-test` | Authenticated read-only diagnostic report; never changes modes or loads a probe |
 | GET | `/api/v1/profile` | Supported-profile/module availability |
 | POST | `/api/v1/mode` | `{mode, request_id}`; asynchronous accepted response |
 | POST | `/api/v1/session` | `{token}`; HttpOnly session + CSRF |
@@ -90,3 +91,5 @@ API 1.3.1 reports tachometers independently of mode verification: a motor can ha
 ## API 1.3.2 compatibility capabilities
 
 Status adds a root-attested `capabilities` report: `monitor_supported`, `control_candidate`, `control_available`, `monitor_only`, `control_reasons`, `kernel`, `python_version`, module readiness and firmware profile. The Web profile endpoint uses this report, rather than authorizing control from a cached installation kernel number. A compiled module is checked by the kernel and the driver's inactive protocol/canary transaction before any policy is applied. `control_verified` remains the actual mode-feedback result, independent of compatibility and sensor validity. Local/REST/CLI/mTLS authentication and request idempotency are unchanged; runtime commands never fall back to SSH.
+
+Self-check details and explicit local CLI tests: [SELFTEST.md](SELFTEST.md). Historical firmware evidence does not enable control; `control_test_verified` remains false for read-only checks.

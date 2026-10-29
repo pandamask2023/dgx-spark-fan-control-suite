@@ -21,3 +21,13 @@ Kernel builds: 6.11.0-1014-nvidia, 6.17.0-1014-nvidia, 7.0.0-1019-nvidia. The 6.
 Unknown firmware does not trigger an experimental write, a downgrade, a reboot, or changes to GPU power/clocks. Real RPM/temperature reads continue independently. Failed reads remain null. Submit redacted version information through Issues if an adapter is missing; do not include tokens, passwords, private keys, serials or UUIDs.
 
 已有本套件：仅在已确认自动模式、未加载覆盖且无未决请求时允许升级，保留令牌与设置；全速/性能运行中不会擅自切模式。旧的独立控制器仍按迁移说明保护退出。四台现有生产设备未被本发行替换或重启。
+
+## Firmware evidence in 0.1.3
+
+| EC | Evidence | Release behavior |
+| --- | --- | --- |
+| 3.13.7 (SoC 2.158.15) | Existing qualified current adapter | Control remains gated by identity, module, protocol and actual feedback |
+| 3.5.8, 3.3.2, 2.78.24, 2.78.18, 2.75.3, 2.66.3 | Signed vendor images; offline instruction replay | Recognized monitoring-only candidates; optional explicit read-only protocol probe, no historical control |
+| Other/missing | Unqualified | Monitoring only; no experimental probe/write |
+
+All seven original image signatures and content hashes were checked locally; modified images were excluded. Replay does not prove the SoC FF-A/eSPI path, independent mechanical RPM, real automatic restoration or thermal behavior on historical hardware. Historical RPM responses include an estimate path, so do not rely on them as independently verified tachometers. See [self-checks](SELFTEST.md). No vendor firmware blobs or private analysis payloads are distributed.

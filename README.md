@@ -9,7 +9,7 @@ Installable DGX Spark fan control with Web, authenticated API, CLI and persisten
 Run on a supported DGX Spark:
 
 ```sh
-curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.1.2/install.sh | sudo sh
+curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.1.3/install.sh | sudo sh
 ```
 
 The interactive terminal wizard offers English/Chinese, verifies compatibility, shows the selected mode and local CLI account, and asks before installing. **Automatic is the default.** Input comes from the terminal, so piping the command does not consume your menu answers. The entry point verifies the native installer's SHA256; the installer verifies the package before APT runs.
@@ -17,10 +17,21 @@ The interactive terminal wizard offers English/Chinese, verifies compatibility, 
 To preview only:
 
 ```sh
-curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.1.2/install.sh | sudo sh -s -- --lang en --dry-run
+curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.1.3/install.sh | sudo sh -s -- --lang en --dry-run
 ```
 
 Preview does not download the core package, install it or change fan modes. An existing owned suite can upgrade while verified in automatic mode with no pending transition; settings and token are preserved. Active or legacy controllers are protected; see [migration guidance](docs/MIGRATION.md). Missing matching kernel headers are included in the reviewed installation plan. No reboot, firmware flash or Secure Boot change is performed. APT needs access to the official configured system repositories.
+
+## Self-checks
+
+The installer runs a read-only self-check after setup. The authenticated Web dashboard also has a **Read-only self-check** button.
+
+```sh
+sudo sparkfan self-test
+sudo sparkfan self-test --json
+```
+
+Checks environment, firmware evidence, configured identity, token permissions, authenticated API and reading freshness. It does not load a module or switch modes. Firmware 3.5.8, 3.3.2, 2.78.24, 2.78.18, 2.75.3 and 2.66.3 are recognized from signed vendor-image analysis, and remain monitoring-only. Historical firmware can report estimated RPM; those readings are not certified as mechanical tachometer measurements. See [self-check levels and explicit tests](docs/SELFTEST.md).
 
 ## Controls and readings
 

@@ -9,7 +9,7 @@
 在受支持的 DGX Spark 上执行：
 
 ```sh
-curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.1.2/install.sh | sudo sh
+curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.1.3/install.sh | sudo sh
 ```
 
 进入交互式向导后，可选中英文、初始风扇模式和本机 CLI 账户；通过兼容性检查、展示安装计划并确认后才安装。**默认自动模式。** 键盘输入从终端读取，管道下载不会吞掉选项。入口先核对原生安装向导 SHA256，向导再验证软件包后交给 APT。
@@ -17,10 +17,21 @@ curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases
 只预览、不安装：
 
 ```sh
-curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.1.2/install.sh | sudo sh -s -- --lang zh --dry-run
+curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.1.3/install.sh | sudo sh -s -- --lang zh --dry-run
 ```
 
 预览不会下载主软件包、安装或切换模式。本套件可在已确认自动模式且无未决操作时升级，保留配置和令牌；正在控速或旧控制器会被保护，见[迁移说明](docs/MIGRATION.md)；缺少匹配内核 headers 时会在计划中说明并一并安装。不重启、不刷固件、不修改安全引导。APT 需要能访问系统配置的官方软件源。
+
+## 自检
+
+安装完成会自动执行只读自检；登录 Web 后也可以点击“只读自检”。
+
+```sh
+sudo sparkfan self-test
+sudo sparkfan self-test --json
+```
+
+检查环境、固件证据、设备身份、令牌权限、鉴权 API 和读数时效；默认不加载模块、不切换模式。根据官方签名固件分析，新增识别 3.5.8、3.3.2、2.78.24、2.78.18、2.75.3、2.66.3，仍只开放监测。旧 EC 的转速回报存在估算路径，不把它当作已独立验证的机械测速。详见[自检等级和显式测试](docs/SELFTEST.md)。
 
 ## 控制与读数
 
