@@ -7,3 +7,6 @@ Before migration, record the existing mode, unit/configuration backups and modul
 Install/configure the suite on the qualified profile, verify native mode and actual RPM/temperature, then explicitly select the desired mode. Keep rollback copies of the original services and files. Do not use `rmmod --force`, disable Secure Boot automatically, or overwrite firmware to bypass a compatibility failure.
 
 This public project does not contain site-specific migration scripts, machine identities, certificates, private policy sources, or SSH authentication helpers. Management applications should adopt the versioned Unix/mTLS API rather than executing host shell commands.
+
+
+Version 0.1.2 allows an owned suite to upgrade only from freshly verified automatic mode with no loaded override or pending operation. Configuration identity, token, web settings and existing admin access are retained. If the owned suite is in full/performance mode, explicitly select automatic first during maintenance, then rerun the installer. Legacy external controllers still require the original explicit migration procedure; they are not silently taken over.

@@ -2,14 +2,14 @@
 # Downloads the versioned installer and verifies its published SHA256 before execution.
 set -eu
 case "${1:-}" in
-    -h|--help) printf '%s\n' 'DGX Spark interactive installer / 交互式安装' 'sudo sh install.sh [--lang zh|en] [--dry-run] [--yes] [--mode auto|full|performance]' 'Requires Linux ARM64, Python 3.12, curl and sha256sum. Default mode: native automatic.'; exit 0 ;;
+    -h|--help) printf '%s\n' 'DGX Spark interactive installer / 交互式安装' 'sudo sh install.sh [--lang zh|en] [--dry-run] [--yes] [--mode auto|full|performance]' 'Requires Linux ARM64, CPython 3.10+, curl and sha256sum. Default mode: native automatic.'; exit 0 ;;
 esac
 [ "$(uname -s)" = Linux ] || { echo 'Requires Ubuntu / DGX OS Linux' >&2; exit 1; }
 case "$(uname -m)" in aarch64|arm64) ;; *) echo 'Requires ARM64' >&2; exit 1 ;; esac
 [ "$(id -u)" -eq 0 ] || { echo 'Run with sudo' >&2; exit 1; }
-for command in python3 curl sha256sum mktemp; do command -v "$command" >/dev/null || { echo "Missing: $command" >&2; exit 1; }; done
-python3 -c 'import sys; assert sys.version_info[:2]==(3,12), "Python 3.12 is required"'
-version=0.1.1
+for command in python3 curl sha256sum mktemp apt-get systemctl; do command -v "$command" >/dev/null || { echo "Missing: $command" >&2; exit 1; }; done
+python3 -c 'import sys; assert sys.implementation.name=="cpython" and sys.version_info[:2]>=(3,10) and not __import__("sysconfig").get_config_var("Py_GIL_DISABLED"), "CPython 3.10+ is required"'
+version=0.1.2
 base="https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v$version"
 work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT HUP INT TERM

@@ -85,3 +85,8 @@ Writes use `{v:1,action:"rpc",host,payload:<the identity-bound broker request>}`
 The same measured RPM/maximum-temperature fields appear in local REST, CLI, Unix RPC and the persistent telemetry stream. Internal private-policy values are filtered recursively from public replies, including nested operation results.
 
 API 1.3.1 reports tachometers independently of mode verification: a motor can have a fresh RPM reading while `effective_mode` is `unknown` during its normal ramp. `fan_speed_sensors` contains one entry per fan with `fan`, `rpm`, `valid`, `source` (`controller_ec_tachometer` or `acpi_tachometer`), `sampled_at` and `age_s`. `fan_speed_sampled_at` is the oldest available fan sample; `telemetry_valid` means both fan readings are valid. A partial result retains the valid fan and returns null for an unavailable one. No cached value is relabelled as a new measurement, and these fields never imply that a mode change succeeded.
+
+
+## API 1.3.2 compatibility capabilities
+
+Status adds a root-attested `capabilities` report: `monitor_supported`, `control_candidate`, `control_available`, `monitor_only`, `control_reasons`, `kernel`, `python_version`, module readiness and firmware profile. The Web profile endpoint uses this report, rather than authorizing control from a cached installation kernel number. A compiled module is checked by the kernel and the driver's inactive protocol/canary transaction before any policy is applied. `control_verified` remains the actual mode-feedback result, independent of compatibility and sensor validity. Local/REST/CLI/mTLS authentication and request idempotency are unchanged; runtime commands never fall back to SSH.
