@@ -31,3 +31,7 @@ Unknown firmware does not trigger an experimental write, a downgrade, a reboot, 
 | Other/missing | Unqualified | Monitoring only; no experimental probe/write |
 
 All seven original image signatures and content hashes were checked locally; modified images were excluded. Replay does not prove the SoC FF-A/eSPI path, independent mechanical RPM, real automatic restoration or thermal behavior on historical hardware. Historical RPM responses include an estimate path, so do not rely on them as independently verified tachometers. See [self-checks](SELFTEST.md). No vendor firmware blobs or private analysis payloads are distributed.
+
+## 0.2.0 licensing layer
+
+The paid layer adds the system python3-cryptography dependency, signed finite-expiry credentials, per-installation proof keys, and optional 15-second HTTPS usage heartbeats. Earlier Python/kernel matrix numbers describe the preceding release. This release independently validates its ARM64 native build, activation/transfer, offline expiry and package lifecycle; the unchanged kernel source retains its existing qualification evidence. Licensing never enables control on unknown firmware.

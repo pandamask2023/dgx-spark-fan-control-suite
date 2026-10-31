@@ -9,7 +9,7 @@ case "$(uname -m)" in aarch64|arm64) ;; *) echo 'Requires ARM64' >&2; exit 1 ;; 
 [ "$(id -u)" -eq 0 ] || { echo 'Run with sudo' >&2; exit 1; }
 for command in python3 curl sha256sum mktemp apt-get systemctl; do command -v "$command" >/dev/null || { echo "Missing: $command" >&2; exit 1; }; done
 python3 -c 'import sys; assert sys.implementation.name=="cpython" and sys.version_info[:2]>=(3,10) and not __import__("sysconfig").get_config_var("Py_GIL_DISABLED"), "CPython 3.10+ is required"'
-version=0.1.3
+version=0.2.0
 base="https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v$version"
 work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT HUP INT TERM

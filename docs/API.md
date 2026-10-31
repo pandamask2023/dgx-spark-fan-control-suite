@@ -93,3 +93,7 @@ API 1.3.1 reports tachometers independently of mode verification: a motor can ha
 Status adds a root-attested `capabilities` report: `monitor_supported`, `control_candidate`, `control_available`, `monitor_only`, `control_reasons`, `kernel`, `python_version`, module readiness and firmware profile. The Web profile endpoint uses this report, rather than authorizing control from a cached installation kernel number. A compiled module is checked by the kernel and the driver's inactive protocol/canary transaction before any policy is applied. `control_verified` remains the actual mode-feedback result, independent of compatibility and sensor validity. Local/REST/CLI/mTLS authentication and request idempotency are unchanged; runtime commands never fall back to SSH.
 
 Self-check details and explicit local CLI tests: [SELFTEST.md](SELFTEST.md). Historical firmware evidence does not enable control; `control_test_verified` remains false for read-only checks.
+
+## Paid activation (0.2.0)
+
+Authenticated `GET /api/v1/license` returns local entitlement status and expiry. `POST /api/v1/license/activate` accepts `activation_code` and optional explicit `confirm_transfer`. Transfers require the old device online and its verified durable release acknowledgement. A `transfer_pending` response is not activation success. See [activation protocol](ACTIVATION.md).

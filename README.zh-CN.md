@@ -2,67 +2,63 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-提供 Web、鉴权 API、CLI 和 mTLS 持久管理通道。公开仓库仅放使用说明和最小安装入口；Web/API/CLI、安装向导以 ARM64 原生二进制发行，不在仓库公开实现源码。内核驱动仅提供 GPL 要求的对应源码。
+提供 Web、鉴权 API、CLI、真实风扇 RPM 和最高物理温度。0.2.0 起，专有用户态的全速／性能控速使用付费激活码；用户态实现以 ARM64 原生二进制发行。公开仓库保留文档、最小安装入口和 GPL 要求的内核对应源码。
 
 ## 一条命令下载安装
 
-在受支持的 DGX Spark 上执行：
-
 ```sh
-curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.1.3/install.sh | sudo sh
+curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.2.0/install.sh | sudo sh
 ```
 
-进入交互式向导后，可选中英文、初始风扇模式和本机 CLI 账户；通过兼容性检查、展示安装计划并确认后才安装。**默认自动模式。** 键盘输入从终端读取，管道下载不会吞掉选项。入口先核对原生安装向导 SHA256，向导再验证软件包后交给 APT。
-
-只预览、不安装：
+交互式向导支持中英文、初始模式和本机 CLI 账户。默认原厂自动模式；未激活可监测和自检，也可随时交回自动温控。入口验证 SHA256，APT 负责依赖安装。不重启、不刷固件、不自动修改安全引导。
 
 ```sh
-curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.1.3/install.sh | sudo sh -s -- --lang zh --dry-run
+# 只预览，不下载主包、不安装、不切换模式
+curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.2.0/install.sh | sudo sh -s -- --lang zh --dry-run
 ```
 
-预览不会下载主软件包、安装或切换模式。本套件可在已确认自动模式且无未决操作时升级，保留配置和令牌；正在控速或旧控制器会被保护，见[迁移说明](docs/MIGRATION.md)；缺少匹配内核 headers 时会在计划中说明并一并安装。不重启、不刷固件、不修改安全引导。APT 需要能访问系统配置的官方软件源。
+升级前须确认已有本套件处于自动模式，无覆盖、无未决操作；保留配置、访问令牌和授权。旧独立控制器会被保护，见[迁移说明](docs/MIGRATION.md)。
 
-## 自检
+## 激活与账户
 
-安装完成会自动执行只读自检；登录 Web 后也可以点击“只读自检”。
+账户与授权中心：**[us.privetm.com/sparkfan](https://us.privetm.com/sparkfan/)**。通过邮箱验证码注册／登录，绑定已有购买码；管理员可设置每码有效天数、发码并查看在线上报状态。支付接口已预留，尚未接入付款渠道或公布售价。
+
+1. 安装后打开本机 Web，登录并输入购买的 `SFA1-...` 激活码，或使用 CLI。
+2. **首次激活必须联网。联网时约每 15 秒同步一次使用状态；离线后可继续用到签名授权的有效期。** 重启不要求重新联网。
+3. 换机时旧设备必须在线。用户确认踢出后，旧设备先保存撤销记录、释放控速并确认，服务器随后才授权新设备。旧设备离线或未确认退出时，新设备不能抢占。
 
 ```sh
-sudo sparkfan self-test
-sudo sparkfan self-test --json
+sudo sparkfan license status
+sudo sparkfan license activate
+# 无交互方式，避免激活码进入命令历史；购买码文件请 chmod 600
+sudo sparkfan license activate --file /path/to/purchase-code.txt
 ```
 
-检查环境、固件证据、设备身份、令牌权限、鉴权 API 和读数时效；默认不加载模块、不切换模式。根据官方签名固件分析，新增识别 3.5.8、3.3.2、2.78.24、2.78.18、2.75.3、2.66.3，仍只开放监测。旧 EC 的转速回报存在估算路径，不把它当作已独立验证的机械测速。详见[自检等级和显式测试](docs/SELFTEST.md)。
+仅发送派生设备码、设备公钥、软件版本、控速模式和心跳；原始序列号／UUID、模型数据和本机 API 令牌不上传。网站对离线设备显示最后上报时间，在线控速时长按连续心跳估算，不补算离线使用。授权到期或设备被踢出后保留真实读数和原厂自动散热。
 
-## 控制与读数
+授权凭证与本机设备私钥共同绑定安装。重装／清除配置前，应安全备份 `/var/lib/dgx-spark-fan-control/`；仅 `apt purge` 会清理保存状态。丢失设备私钥不能仅凭公开设备码冒充旧机。详见[激活与换机](docs/ACTIVATION.md)。
 
-- **自动模式**：释放覆盖，交回原厂温控。
-- **全速模式**：请求最高目标，以真实反馈确认。
-- **性能模式**：需要另行提供的本地私有组件；其源码和二进制均不在公开仓库或 Release 中。
+## 控制、读数和自检
 
 ```sh
 sudo sparkfan status
-sudo sparkfan full
-sudo sparkfan auto
-sudo sparkfan performance   # 需要私有组件
+sudo sparkfan full         # 需有效授权
+sudo sparkfan auto         # 随时释放覆盖
+sudo sparkfan performance  # 还需另行提供的私有组件
+sudo sparkfan self-test --json
 sudo sparkfan doctor
 ```
 
-回传逐只风扇真实 RPM、Linux thermal 框架中可读物理传感器最高温度，以及来源、有效性和采样时间。切换模式不掩盖仍可读取的转速；读不到时返回空值。受理请求不等于目标已生效，必须等待实际确认。
+Web 默认 **`http://127.0.0.1:8797/`**，仅本机监听。`sudo sparkfan token` 查看访问令牌；访问令牌用于登录，购买码用于激活，二者不同。Web/API/CLI 和后台控制器统一检查授权，激活本身不切换模式。[API 文档](docs/API.md)。
 
-Web 默认 `http://127.0.0.1:8797/`，仅本机监听。运行 `sudo sparkfan token` 查看访问令牌，安装器不会自动打印令牌。[API 文档](docs/API.md)。
+逐只返回 RPM、来源、有效性、采样时间和物理传感器最高温度；不可读取的数据返回空值。受理请求不等于目标已生效，必须等实际反馈。默认自检只读，不加载模块、不切换模式；见[自检说明](docs/SELFTEST.md)。
 
-## 支持范围与许可
+## 兼容性和许可
 
-独立实验性实现，不是 NVIDIA 官方产品。硬件仍要求 NVIDIA DGX Spark P4242、Linux ARM64、APT/systemd，但不再卡死某个 BIOS、内核或 Python 小版本。
+独立实验性实现，非 NVIDIA 官方产品。硬件要求 DGX Spark P4242、Linux ARM64、APT/systemd、标准 CPython 3.10+；不支持 free-threaded Python。DKMS 使用当前内核 headers，主动控速仍核验 EC `3.13.7`／SoC `2.158.15` 和协议；历史 EC 只监测。安全引导开启时，控速需内核认可的可信模块。
 
-- **Python**：同一套原生 `abi3` 模块已在 CPython 3.10、3.11、3.12、3.13、3.14 验证，覆盖旧版系统网络库。要求标准 CPython 3.10+；不支持 free-threaded 版本，未测试的新小版本只开放监测。
-- **内核**：已在 NVIDIA `6.11.0-1014`、`6.17.0-1014`、`7.0.0-1019` 编译通过。DKMS 根据当前内核构建，写入任何控制策略前先做协议自检；不把编译通过当作每个内核都已实机全速验证。
-- **BIOS**：按本机识别并在加载时绑定，不再固定 `5.36_0ACUM028`。
-- **EC/SoC**：目前主动控速仍核验 EC `3.13.7`／SoC `2.158.15` 及对应 FF-A 协议；其他或无法读取的固件版本可以安装监测，但不开放未知协议写入。
-- **安全引导／签名**：不再阻止安装监测；主动控速须使用内核认可的可信模块，不会自动关安全引导或注册密钥。
+前版 ABI 及内核兼容证据继续保留；0.2.0 的授权功能以本版实测回归为准，不把前版测试数量当成本版结果。见[兼容详情](docs/COMPATIBILITY.md)。不承诺通用硬件、绝对防破解、满载性能或长期寿命已经验证。
 
-[兼容详情](docs/COMPATIBILITY.md)。必要硬件或原生 ABI 不匹配仍会停止安装；控速未通过检查时保留监测，不承诺通用硬件、满载性能或长期寿命验证。
+私有性能算法和组件不在 GitHub。GPL 内核组件的对应源码、构建文件与许可证随 kernel-source 归档和 DKMS 包提供；旧版已授予的许可不变。[许可](LICENSE)。
 
-用户态二进制闭源发行。GPL-2.0-only 内核驱动的源码、构建文件和许可证按要求随 Release 的 kernel-source 归档及 DKMS 包提供。第三方许可、旧版已授予的开源许可不受影响。见[许可说明](LICENSE)。
-
-安装包与校验文件见 [Releases](https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases)；问题与建议请提交 [Issues](https://github.com/pandamask2023/dgx-spark-fan-control-suite/issues)。卸载用 `sudo apt remove dgx-spark-fan-control`，仅 `apt purge` 会清理保存的配置。
+[下载 Releases](https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases) · [反馈 Issues](https://github.com/pandamask2023/dgx-spark-fan-control-suite/issues)。卸载：`sudo apt remove dgx-spark-fan-control`。

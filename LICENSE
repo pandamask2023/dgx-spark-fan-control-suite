@@ -1,7 +1,10 @@
-DGX Spark Fan Control Suite 0.1.1
+DGX Spark Fan Control Suite 0.2.0 — paid proprietary user-space controls
 
-User-space Web/API/CLI and installer components: Copyright 2026 pandamask2023. All rights reserved. Binary use is permitted. No user-space source license is granted with this release.
+Copyright 2026 pandamask2023. All rights reserved for proprietary user-space components.
+A purchased device-bound entitlement is required for this version's proprietary full-speed/performance controls. Activation and device transfer require the publisher's HTTPS service. A verified cached credential permits offline use until its signed expiry. While connected, the software reports device licensing status, selected control mode, software version, and heartbeat time. Account email is used for verification and license management. Monitoring, diagnostics, and restoration of native automatic cooling remain available without a paid entitlement.
 
-Kernel driver, its build files and required corresponding source: GPL-2.0-only; see LICENSES/GPL-2.0.txt and the kernel-source archive supplied with the release. GPL rights for this component are unaffected.
+A code authorizes one active installation. Transfer requires the old installation online, explicit user confirmation, and the old installation's durable revocation and control-release acknowledgement before a new entitlement is issued. Copying credentials does not authorize another hardware identity or device key. This is not a guarantee against root-level modification, full-state rollback, or hardware/clock spoofing. No proprietary user-space source license is granted.
 
-Third-party dependencies retain their respective licenses. Earlier source releases remain governed by their original licenses; this notice does not revoke permissions already granted for those versions.
+The kernel driver, build files, and corresponding source remain GPL-2.0-only. These proprietary activation terms do not restrict GPL rights. See LICENSES/GPL-2.0.txt and the corresponding kernel-source archive. The private performance companion is separately supplied and absent from the public distribution.
+
+Third-party dependencies retain their licenses. Earlier releases retain their originally granted permissions. Pricing and payment integration are arranged separately; no functioning payment gateway is included in this version.

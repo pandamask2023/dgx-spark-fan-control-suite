@@ -2,67 +2,61 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-Installable DGX Spark fan control with Web, authenticated API, CLI and persistent mTLS management. This public repository contains documentation and a small installation entry point. User-space components are distributed as native ARM64 binaries; their implementation source is not published here. Only the kernel driver's required GPL source is supplied separately.
+Web, authenticated API and CLI with actual fan RPM and maximum physical temperature. Version 0.2.0 introduces paid activation for proprietary user-space full-speed/performance controls. User-space implementation ships as ARM64 native binaries; this public repository contains documentation, the minimum installation entry, and required GPL kernel corresponding source.
 
 ## One-command installation
 
-Run on a supported DGX Spark:
-
 ```sh
-curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.1.3/install.sh | sudo sh
+curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.2.0/install.sh | sudo sh
 ```
 
-The interactive terminal wizard offers English/Chinese, verifies compatibility, shows the selected mode and local CLI account, and asks before installing. **Automatic is the default.** Input comes from the terminal, so piping the command does not consume your menu answers. The entry point verifies the native installer's SHA256; the installer verifies the package before APT runs.
-
-To preview only:
+The bilingual interactive installer reviews compatibility, initial mode and local CLI access before installation. Native automatic cooling is the default. Monitoring, diagnostics and restoration of native cooling remain available without activation. The bootstrap verifies SHA256 and APT installs dependencies. No reboot, firmware flash or automatic Secure Boot changes.
 
 ```sh
-curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.1.3/install.sh | sudo sh -s -- --lang en --dry-run
+curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.2.0/install.sh | sudo sh -s -- --lang en --dry-run
 ```
 
-Preview does not download the core package, install it or change fan modes. An existing owned suite can upgrade while verified in automatic mode with no pending transition; settings and token are preserved. Active or legacy controllers are protected; see [migration guidance](docs/MIGRATION.md). Missing matching kernel headers are included in the reviewed installation plan. No reboot, firmware flash or Secure Boot change is performed. APT needs access to the official configured system repositories.
+Owned upgrades require verified automatic mode with no override/pending operation; settings, token and authorization are preserved. Legacy controllers are protected. See [migration](docs/MIGRATION.md).
 
-## Self-checks
+## Accounts and activation
 
-The installer runs a read-only self-check after setup. The authenticated Web dashboard also has a **Read-only self-check** button.
+**[Account and license portal](https://us.privetm.com/sparkfan/)**: register/sign in using an emailed verification code, claim purchase codes, and view reported status. Administrators set each code's duration, issue codes and inspect online usage. Payment integration is reserved but not enabled; pricing is arranged separately.
+
+1. Sign in to the local Web UI and enter the purchased `SFA1-...` code, or use the CLI.
+2. **First activation requires Internet. Connected devices synchronize usage status about every 15 seconds; disconnected devices continue until the signed authorization expires.** Reboots do not require another connection.
+3. To transfer a used code, the old device must be online and the user must explicitly confirm signing it out. The old installation durably revokes its credential and verifies release to native cooling before the server issues the new credential. An offline or unacknowledged old installation blocks transfer.
 
 ```sh
-sudo sparkfan self-test
-sudo sparkfan self-test --json
+sudo sparkfan license status
+sudo sparkfan license activate
+sudo sparkfan license activate --file /path/to/purchase-code.txt
 ```
 
-Checks environment, firmware evidence, configured identity, token permissions, authenticated API and reading freshness. It does not load a module or switch modes. Firmware 3.5.8, 3.3.2, 2.78.24, 2.78.18, 2.75.3 and 2.66.3 are recognized from signed vendor-image analysis, and remain monitoring-only. Historical firmware can report estimated RPM; those readings are not certified as mechanical tachometer measurements. See [self-check levels and explicit tests](docs/SELFTEST.md).
+Keep code files owner-only (`chmod 600`). The service receives a derived device fingerprint, installation public key, software version, control mode and heartbeats. Raw serial/UUID, model data and the local API token are not uploaded. Offline devices show their last report; sampled online control time excludes offline gaps.
 
-## Controls and readings
+Credentials bind both hardware and an installation key. Securely back up `/var/lib/dgx-spark-fan-control/` before reinstalling or purging. Normal upgrades retain it; `apt purge` removes saved state. A public fingerprint alone cannot impersonate the old device. See [activation and transfer](docs/ACTIVATION.md).
 
-- **Automatic:** releases the override and returns cooling to firmware.
-- **Full speed:** requests the maximum target and verifies actual feedback.
-- **Performance:** available only with a separately supplied private local companion. Neither its source nor its binary is in this public repository or release.
+## Control, telemetry and self-check
 
 ```sh
 sudo sparkfan status
-sudo sparkfan full
-sudo sparkfan auto
-sudo sparkfan performance   # requires the private companion
+sudo sparkfan full         # valid entitlement required
+sudo sparkfan auto         # always permits release
+sudo sparkfan performance  # also needs the separate private companion
+sudo sparkfan self-test --json
 sudo sparkfan doctor
 ```
 
-Reports actual per-fan RPM and the maximum available physical Linux thermal reading, with source, validity and sample time. A mode transition does not hide an otherwise valid tachometer reading. Missing readings are null. An accepted request is not reported as physically applied until confirmation succeeds.
+The Web UI defaults to `http://127.0.0.1:8797/`, loopback only. Use `sudo sparkfan token` for the application access token; this differs from a purchase activation code. Web/API/CLI and direct controller startup enforce authorization. Activation itself does not change the mode. See [API](docs/API.md).
 
-Web: `http://127.0.0.1:8797/`, loopback only. Run `sudo sparkfan token` locally to view the access token; the installer does not print it automatically. [API documentation](docs/API.md).
+Telemetry includes per-fan RPM, source, validity and sample time, plus the highest readable physical temperature. Missing readings are null. Accepted requests require real feedback before being reported successful. Default self-check is read-only and loads no modules or modes; see [self-check](docs/SELFTEST.md).
 
-## Scope and license
+## Compatibility and licensing
 
-Experimental, independent software; not an NVIDIA product. Hardware remains NVIDIA DGX Spark P4242 on Linux ARM64 with APT/systemd. The installer no longer requires one exact BIOS, kernel or Python minor version.
+Independent experimental software, not an NVIDIA product. Requires DGX Spark P4242, Linux ARM64, APT/systemd and standard CPython 3.10+; free-threaded Python is unsupported. DKMS builds against matching headers. Active control still checks EC `3.13.7` / SoC `2.158.15` and protocol; historical firmware remains monitoring-only. Secure Boot control requires a trusted module.
 
-- **CPython:** 3.10–3.14 tested using the same native `abi3` modules, including older distribution networking libraries. Regular CPython 3.10+ is required; free-threaded builds are not supported. Future untested minors are monitoring-only.
-- **Kernel:** compiled for NVIDIA `6.11.0-1014`, `6.17.0-1014`, and `7.0.0-1019`; DKMS builds for the running kernel, rather than an exact-version allowlist. Protocol self-checks precede any control write. Compilation is not a full-speed hardware test on each kernel.
-- **BIOS:** its identity is captured locally and bound when loading; it is not hardcoded to `5.36_0ACUM028`.
-- **EC/SoC:** active control currently qualifies EC `3.13.7` / SoC `2.158.15` and the expected FF-A protocol. Other/missing firmware versions remain installable for monitoring, with control disabled.
-- **Secure Boot/signatures:** monitoring can install without disabling security. Active control requires an accepted trusted module; the installer does not enroll keys or change Secure Boot.
+Earlier ABI/kernel qualification remains recorded; version 0.2.0 licensing is assessed by its own regression evidence, not the preceding release's test count. See [compatibility](docs/COMPATIBILITY.md). Universal hardware, root-resistant DRM, full-load performance and long-term durability are not certified.
 
-[Compatibility details](docs/COMPATIBILITY.md). No full-load or long-term lifespan guarantee is made.
+The private performance algorithm and companion stay absent from GitHub. Kernel GPL rights, corresponding source/build files and earlier granted licenses remain unchanged. See [LICENSE](LICENSE).
 
-User-space binaries are proprietary. The GPL-2.0-only kernel source/build files and license are provided in the Release's kernel-source archive and in the DKMS package as required. Third-party licenses and permissions granted by earlier source releases remain unaffected. See [license notices](LICENSE).
-
-Download packages and checksums from [Releases](https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases). Report problems or request features in [Issues](https://github.com/pandamask2023/dgx-spark-fan-control-suite/issues). Remove with `sudo apt remove dgx-spark-fan-control`; saved configuration is removed only by `apt purge`.
+[Releases](https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases) · [Issues](https://github.com/pandamask2023/dgx-spark-fan-control-suite/issues). Remove with `sudo apt remove dgx-spark-fan-control`.
