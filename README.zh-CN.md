@@ -7,17 +7,25 @@
 ## 一条命令下载安装
 
 ```sh
-curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.2.0/install.sh | sudo sh
+curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.3.0/install.sh | sudo sh
 ```
 
 交互式向导支持中英文、初始模式和本机 CLI 账户。默认原厂自动模式；未激活可监测和自检，也可随时交回自动温控。入口验证 SHA256，APT 负责依赖安装。不重启、不刷固件、不自动修改安全引导。
 
 ```sh
 # 只预览，不下载主包、不安装、不切换模式
-curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.2.0/install.sh | sudo sh -s -- --lang zh --dry-run
+curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.3.0/install.sh | sudo sh -s -- --lang zh --dry-run
 ```
 
 升级前须确认已有本套件处于自动模式，无覆盖、无未决操作；保留配置、访问令牌和授权。旧独立控制器会被保护，见[迁移说明](docs/MIGRATION.md)。
+
+## 0.3.0：可选 Web 总面板与转速滑块
+
+增加独立的[Web 总面板](https://us.privetm.com/sparkfan/panel)，登录后可控制已主动配对的设备。支持自动、性能、全速和自定义转速；显示真实 RPM 与物理最高温度。激活后默认不连接，用户自行确认配对。
+
+运行 `sudo sparkfan calibrate-rpm` 完成本机标定后，可通过滑块或 `sudo sparkfan rpm 3300` 调节双风扇平均转速。闭环在设备本地执行，断网后仍可使用至授权到期；高温保护优先。性能组件通过有效授权私下下载、验签并缓存，不包含在 GitHub 资产中。
+
+[完整配对与标定说明](docs/WEB_PANEL.md) · [网页配对指引](https://us.privetm.com/sparkfan/pairing)。
 
 ## 激活与账户
 
@@ -44,7 +52,7 @@ sudo sparkfan license activate --file /path/to/purchase-code.txt
 sudo sparkfan status
 sudo sparkfan full         # 需有效授权
 sudo sparkfan auto         # 随时释放覆盖
-sudo sparkfan performance  # 还需另行提供的私有组件
+sudo sparkfan performance  # 激活后验证并缓存私有组件
 sudo sparkfan self-test --json
 sudo sparkfan doctor
 ```

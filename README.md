@@ -7,16 +7,24 @@ Web, authenticated API and CLI with actual fan RPM and maximum physical temperat
 ## One-command installation
 
 ```sh
-curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.2.0/install.sh | sudo sh
+curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.3.0/install.sh | sudo sh
 ```
 
 The bilingual interactive installer reviews compatibility, initial mode and local CLI access before installation. Native automatic cooling is the default. Monitoring, diagnostics and restoration of native cooling remain available without activation. The bootstrap verifies SHA256 and APT installs dependencies. No reboot, firmware flash or automatic Secure Boot changes.
 
 ```sh
-curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.2.0/install.sh | sudo sh -s -- --lang en --dry-run
+curl -fsSL https://github.com/pandamask2023/dgx-spark-fan-control-suite/releases/download/v0.3.0/install.sh | sudo sh -s -- --lang en --dry-run
 ```
 
 Owned upgrades require verified automatic mode with no override/pending operation; settings, token and authorization are preserved. Legacy controllers are protected. See [migration](docs/MIGRATION.md).
+
+## 0.3.0: optional Web fleet panel and RPM slider
+
+Use the separate [Web panel](https://us.privetm.com/sparkfan/panel) to control explicitly paired devices after signing in. Native auto, performance, full speed and custom mean RPM are available, with real per-fan RPM and maximum physical temperature. Pairing is disabled by default and requires device-side consent.
+
+Run `sudo sparkfan calibrate-rpm` to qualify the device, then use the slider or `sudo sparkfan rpm 3300`. Feedback runs locally and remains available offline until license expiry; thermal protection takes priority. The performance component is privately downloaded, signature-verified and cached after valid activation; it is excluded from GitHub assets.
+
+[Pairing and calibration guide](docs/WEB_PANEL.md) · [Online pairing guide](https://us.privetm.com/sparkfan/pairing).
 
 ## Accounts and activation
 

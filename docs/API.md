@@ -13,7 +13,7 @@ Default: `http://127.0.0.1:8797`, loopback only. Every API request needs a beare
 | POST | `/api/v1/session` | `{token}`; HttpOnly session + CSRF |
 | POST | `/api/v1/logout` | Revoke browser session |
 
-Modes are `full`, `performance`, `auto`. Performance requires a separate private component; its computation, binaries and internal values are not distributed through this project.
+Modes are `full`, `performance`, `auto`, `rpm`. Performance uses a private component delivered after authenticated activation and cached for offline use. RPM requires device-local calibration. Private implementations and components are not distributed through public GitHub assets.
 
 Important status fields:
 
@@ -97,3 +97,13 @@ Self-check details and explicit local CLI tests: [SELFTEST.md](SELFTEST.md). His
 ## Paid activation (0.2.0)
 
 Authenticated `GET /api/v1/license` returns local entitlement status and expiry. `POST /api/v1/license/activate` accepts `activation_code` and optional explicit `confirm_transfer`. Transfers require the old device online and its verified durable release acknowledgement. A `transfer_pending` response is not activation success. See [activation protocol](ACTIVATION.md).
+
+## Web panel and RPM (0.3.0)
+
+Local mode requests add `target_rpm` only for RPM: `{"mode":"rpm","target_rpm":3300,"request_id":"<UUID>"}`. Status `rpm_control` reports `target_rpm`, `effective_target_rpm`, `mean_rpm`, `error_rpm`, `stable`, `limited`, `reason`, `quantized`, `min_rpm`, `max_rpm`, `tolerance_rpm` and `state`. A successful mode operation means the mode is verified; reaching stable RPM is a separate measured condition.
+
+Local authenticated routes: `GET /api/v1/web-panel`, `POST /api/v1/web-panel/pair` with `{pairing_code,name,opt_in:true}`, and `POST /api/v1/web-panel/disconnect` with `{}`. Cookie writes require CSRF. Default pairing state is disabled.
+
+Account routes under `https://us.privetm.com/sparkfan`: authenticated `GET /api/web/devices`; session, Origin and CSRF protected `POST /api/web/pairing-code` with `{license_id}`, `POST /api/web/command` with `{device_id,mode,request_id,target_rpm?}`, and `POST /api/web/disconnect` with `{device_id}`. Ownership and the current activation generation/key are checked. Pairing codes expire after five minutes and are single-use.
+
+Devices use `/v1/web/pair`, `/v1/web/sync`, `/v1/web/disconnect` with their signed license and fresh device-key proof. Device-side consent is required before connecting; no inbound device port or SSH transport is used. Pending commands expire after 30 seconds. Delivery, mode confirmation and RPM stability remain separate. Remote control refuses offline devices; opt-out preserves local mode. See [Web panel guide](WEB_PANEL.md).
